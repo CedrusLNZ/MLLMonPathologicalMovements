@@ -383,7 +383,7 @@ def parse_answer_json(raw_text):
         ans = _norm_ans(obj.get('answer'))
         just = obj.get('justification', '')
         just = _extract_nested_just(just)
-        return {'answer': ans or 'fail', 'justification': just}
+        return {'answer': ans or 'fail'}
     except Exception:
         pass
 
@@ -432,7 +432,7 @@ def ExtractFeatureByVLM(video_path, file_name, video_idx_info, log_csv, prompt_d
 
         else:
             # Retries exhausted
-            answer_dict[feature] = {'answer': "fail", 'justification': "fail"}
+            answer_dict[feature] = {'answer': "fail"}
             if not args.disable_logs and log_csv is not None:
                 append_to_csv(log_csv, [file_name, prompt, "fail", "fail"])
 
@@ -447,7 +447,6 @@ def main():
     output_header = ['file_name']
     for feat in prompts.keys():
         output_header.append(feat)
-        
 
     # Prepare result CSV (write header if new)
     if os.path.exists(inf_result_csv_fp):
@@ -506,7 +505,7 @@ def main():
         if not os.path.exists(video_path):
             # File missing: write placeholders
             for _ in prompts.keys():
-                row_to_write.extend(["VideoNotExist", "VideoNotExist"])
+                row_to_write.append("VideoNotExist")
             append_to_csv(inf_result_csv_fp, row_to_write)
             continue
 
@@ -529,7 +528,7 @@ def main():
             print(f"Error processing video {file_name}: {str(e)}")
             traceback.print_exc()
             for _ in prompts.keys():
-                row_to_write.extend(["fail", "fail"])
+                row_to_write.append("fail")
 
         append_to_csv(inf_result_csv_fp, row_to_write)
 

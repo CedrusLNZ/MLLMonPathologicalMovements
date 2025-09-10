@@ -75,7 +75,7 @@ all_features = ['occur_during_sleep','blank_stare','close_eyes','eye_blinking',
 
 format_prompt_time = " Answer with 'yes' or 'no' and provide a justification for the answer.  Respond with exactly one JSON object in the format {\"answer\": \"yes\" or \"no\", \"justification\": \"brief explanation\", \"start_time\": \"MM:SS\" or \"N/A\"} and do not include any extra text outside of the JSON."
 format_prompt_no_time = " Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format {\"answer\": \"yes\" or \"no\", \"justification\": \"brief explanation\"} and do not include any extra text outside of the JSON."
-
+format_prompt_no_time = " Answer with 'yes' or 'no'. Do not include any extra text in your output—only the answer."
 # Function to clean and fix malformed JSON responses
 def _strip_fence(s: str) -> str:
     s = s.strip()
@@ -520,7 +520,6 @@ def main():
     output_header = ['file_name']
     for feature in prompt_dict.keys():    
         output_header.append(feature)
-        output_header.append(f'justification_for_{feature}')
     
 
     # List all files in the directory to check existence quickly
@@ -589,14 +588,11 @@ def main():
                         # Extract the three values from the answer_dict
                         feature_data = answer_dict[feature]
                         row_to_write.append(feature_data['answer'])
-                        # if feature in features_only_time:
-                        #     continue
-                        row_to_write.append(feature_data['justification'])
                         # if feature not in features_no_time:
                         #     row_to_write.append(feature_data['start_time'])
                     else:
                         
-                        row_to_write.extend(["fail", "fail"])
+                        row_to_write.append("fail")
             except Exception as e:
                 print(f"Error processing video {file_name}: {str(e)}")
                 # Create fail entries for all features (3 columns each: feature, justification, start_time)
@@ -608,7 +604,7 @@ def main():
             # Each feature needs 3 columns: feature, justification, start_time
             for _ in prompt_dict.keys():
                
-                row_to_write.extend(["VideoNotExist", "VideoNotExist"])
+                row_to_write.append("VideoNotExist")
         
         # Append to the output CSV (no header since it's already written)
         append_to_csv(inf_result_csv_fp, row_to_write)

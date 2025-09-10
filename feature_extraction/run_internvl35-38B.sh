@@ -5,7 +5,8 @@
 # Activate virtual environment
 eval "$(conda shell.bash hook)"
 # conda activate qwenvl
-conda activate internvl3_5
+# conda activate internvl3_5
+conda activate internvl
 
 # Check if activation was successful
 if [ $? -ne 0 ]; then
@@ -15,6 +16,8 @@ fi
 
 echo "Conda environment internvl3_5 activated."
 
+# export HF_HOME=/mnt/SSD4/prateik
+export HF_HOME=/mnt/SSD3/lina/SeizureSemiologyBench/cache
 
 # model_name options
 # Qwen/Qwen2.5-VL-7B-Instruct   1GPU  
@@ -25,10 +28,10 @@ echo "Conda environment internvl3_5 activated."
 
 # Run the inference script
 python internvl35_32B.py \
-    --gpu 2,3 \
+    --gpu 1,3 \
     --tp 2 \
     --videos_range 1-1000 \
-    --output_dir /home/lina/icassp/output \
+    --output_dir /mnt/SSD1/prateik/icassp_vlm/output \
     --model_name OpenGVLab/InternVL3_5-38B \
     --dataset_dir /mnt/SSD3/tengyou/seizure_videos/segments/all_dataset \
     --cache_dir /mnt/SSD3/lina/SeizureSemiologyBench/cache 
