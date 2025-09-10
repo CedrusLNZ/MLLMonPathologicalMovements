@@ -6,7 +6,7 @@
 eval "$(conda shell.bash hook)"
 # conda activate qwenvl
 # conda activate internvl3_5
-conda activate internvl
+conda activate internvl3_5
 
 # Check if activation was successful
 if [ $? -ne 0 ]; then
@@ -27,13 +27,22 @@ export HF_HOME=/mnt/SSD3/lina/SeizureSemiologyBench/cache
 # video_range 1-2314  eg.1-1000, 1001-2000, 2001-2314
 
 # Run the inference script
-python internvl35_32B.py \
-    --gpu 1,3 \
+python internvl35_32B_crop.py \
+    --gpu 0,1,2,3 \
     --tp 2 \
     --videos_range 1-1000 \
-    --output_dir /mnt/SSD1/prateik/icassp_vlm/output \
+    --output_dir /mnt/SSD3/lina/task4 \
     --model_name OpenGVLab/InternVL3_5-38B \
-    --dataset_dir /mnt/SSD3/tengyou/seizure_videos/segments/all_dataset \
+    --dataset_dir /mnt/SSD3/lina/ucla2/cropped_segments \
     --cache_dir /mnt/SSD3/lina/SeizureSemiologyBench/cache 
+
+  python internvl35_32B_pose.py \
+    --gpu 2,3 \
+    --tp 2 \
+    --videos_range 1-1000 \
+    --output_dir /mnt/SSD3/lina/task4 \
+    --model_name OpenGVLab/InternVL3_5-38B \
+    --dataset_dir /mnt/SSD3/lina/ucla2/pose_segments \
+    --cache_dir /mnt/SSD3/lina/SeizureSemiologyBench/cache   
 
 echo "Done!"

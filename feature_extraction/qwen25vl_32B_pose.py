@@ -135,7 +135,7 @@ def clean_json_response(raw_response: str):
         return None
 
 # CSV file to read
-inf_result_csv_fp = inference_dir + f'/Task1_{model_name.split("/")[-1]}_{videos_range}.csv' # Output CSV (with extracted features)
+inf_result_csv_fp = inference_dir + f'/Task1_{model_name.split("/")[-1]}_{videos_range}_pose.csv' # Output CSV (with extracted features)
 # log_file = inference_log_dir + 'qwen_description_log.csv'      # Log file to record each prompt and answer
 
 

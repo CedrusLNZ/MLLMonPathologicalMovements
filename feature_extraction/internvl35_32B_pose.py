@@ -105,7 +105,7 @@ if not args.disable_logs:
     os.makedirs(inference_log_dir, exist_ok=True)
 
 # Output CSV path follows Qwen naming
-inf_result_csv_fp = os.path.join(inference_dir, f'Task1_{model_name.split("/")[-1]}_{videos_range}.csv')
+inf_result_csv_fp = os.path.join(inference_dir, f'Task1_{model_name.split("/")[-1]}_{videos_range}_pose.csv')
 
 # --------------------------- Features ---------------------------
 
