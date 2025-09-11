@@ -42,8 +42,8 @@ def parse_arguments():
 
     # Data settings
     parser.add_argument('--dataset_dir', type=str,
-                        default='/mnt/SSD3/lina/ucla2/pose_segments',
-                        help='Directory containing pose segment videos')
+                        default=None,
+                        help='Directory containing seizure video files')
     
     parser.add_argument('--max_frames', type=int, default=60,
                         help='Maximum frames sampled per video (segment-center sampling)')
@@ -105,15 +105,14 @@ if not args.disable_logs:
     os.makedirs(inference_log_dir, exist_ok=True)
 
 # Output CSV path follows Qwen naming
-inf_result_csv_fp = os.path.join(inference_dir, f'Task1_{model_name.split("/")[-1]}_{videos_range}_pose.csv')
+inf_result_csv_fp = os.path.join(inference_dir, f'Task1_{model_name.split("/")[-1]}_{videos_range}_crop.csv')
 
 # --------------------------- Features ---------------------------
 
 all_features = [
-    'arm_flexion', 'arms_move_simultaneously', 'occur_during_sleep',
-    'tonic', 'clonic', 'arm_straightening', 'figure4',
-    'limb_automatisms', 'asynchronous_movement', 'pelvic_thrusting',
-    'full_body_shaking'
+    'blank_stare', 'close_eyes', 'eye_blinking',
+    'oral_automatisms', 'face_pulling', 'face_twitching',
+    'head_turning'
 ]
 
 MAX_FRAMES = args.max_frames
@@ -178,7 +177,6 @@ def load_video(video_path, bound=None, num_segments=32):
 engine_cfg = PytorchEngineConfig(tp=args.tp, session_len=32768)
 pipe = pipeline(model_name, backend_config=engine_cfg)
 
-
 def inference(video_path, prompt, max_new_tokens=None, temperature=0.0, do_sample=False):
     """
     InternVL3.5-8B inference via LMDeploy:
@@ -222,46 +220,60 @@ def get_prompts():
     prompts = {}
     for feature in feature_names:
         if feature == 'blank_stare':
-            prompts[feature] = "Does the patient exhibit a blank stare? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer."
+            prompts[feature] = "Does the patient exhibit a blank stare? Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
         if feature == 'arm_flexion':
-            prompts[feature] = "Does the patient flex their arms or arm at the elbows for at least a few video frames? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer."
+            prompts[feature] = "Does the patient flex their arms or arm at the elbows for at least a few video frames? Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
         if feature == 'arms_move_simultaneously':
-            prompts[feature] = "Do the patient's arms start moving approximately at the same time? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer."
+            prompts[feature] = "Do the patient's arms start moving approximately at the same time? Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
         # if feature == 'gender':
         #     prompts[feature] = "Please identify the gender of the patient in the video. Please answer with \"female\" or \"male\". Do not include extra text in your output—only the answer."
         if feature == 'occur_during_sleep':
-            prompts[feature] = "Is the patient sleeping at the beginning of the video? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer."
-        # if feature == 'ictal_vocalization':
-        #     prompts[feature] = "Does the patient make any groaning, moaning, guttural sounds or do they utter stereotyped repetitive phrases? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer."
+            prompts[feature] = "Is the patient sleeping at the beginning of the video? Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
+        if feature == 'ictal_vocalization':
+            prompts[feature] = "Does the patient make any groaning, moaning, guttural sounds or do they utter stereotyped repetitive phrases? Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
         if feature == 'close_eyes':
-            prompts[feature] = "Do the patient's eyes remain consistently closed or mostly closed throughout the video? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer."
+            prompts[feature] = "Do the patient's eyes remain consistently closed or mostly closed throughout the video? Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
         if feature == 'eye_blinking':
-            prompts[feature] = "Does the patient show rapid blinking of the eyes during the video? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer."
+            prompts[feature] = "Does the patient show rapid blinking of the eyes during the video? Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
         if feature == 'tonic':
-            prompts[feature] = "The tonic phase is marked by a sudden onset of sustained stiffness or rigidity, usually lasting 5-20 seconds. This stiffness may be generalized, with all limbs held in fixed extension or flexion posture and can include stiffening of the head and axial body. It may also be focal involving a subset of body parts or just one body part at a time. Does this patient show tonic? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer. "
+            prompts[feature] = "The tonic phase is marked by a sudden onset of sustained stiffness or rigidity, usually lasting 5-20 seconds. This stiffness may be generalized, with all limbs held in fixed extension or flexion posture and can include stiffening of the head and axial body. It may also be focal involving a subset of body parts or just one body part at a time. Does this patient show tonic? Give an answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
         if feature == 'clonic':
-            prompts[feature] = "Clonic Phase: Rhythmic, jerking muscle contractions involving the limbs, face, and trunk. The jerking movements gradually slow before ceasing entirely. Clonic movements present as rhythmic, regular stereotyped contraction and relaxation of the affected body parts. Does this patient show clonic? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer."
+            prompts[feature] = "Clonic Phase: Rhythmic, jerking muscle contractions involving the limbs, face, and trunk. The jerking movements gradually slow before ceasing entirely. Clonic movements present as rhythmic, regular stereotyped contraction and relaxation of the affected body parts. Does this patient show clonic? Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
         if feature == 'arm_straightening':
-            prompts[feature] = "Does the patient straighten or extend their arms or arm at the elbow for at least a few video frames? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer."
+            prompts[feature] = "Does the patient straighten or extend their arms or arm at the elbow for at least a few video frames? Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
         if feature == 'figure4':
-            prompts[feature] = "Figure 4 refers to a tonic sustained posture where one arm is flexed while the other is extended at the same time. Does the patient exhibit a Figure 4 posture? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer."
+            prompts[feature] = "Figure 4 refers to a tonic sustained posture where one arm is flexed while the other is extended at the same time. Does the patient exhibit a Figure 4 posture? Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
         if feature == 'oral_automatisms':
-            prompts[feature] = "Does the patient exhibit repetitive, stereotyped mouth or tongue movements such as chewing, lip-smacking, or swallowing? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer."
+            prompts[feature] = "Does the patient exhibit repetitive, stereotyped mouth or tongue movements such as chewing, lip-smacking, or swallowing? Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
         if feature == 'limb_automatisms':
-            prompts[feature] = "Does the patient exhibit repetitive, stereotyped limb movements such as fumbling, picking, rubbing or patting?  Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer."
+            prompts[feature] = "Does the patient exhibit repetitive, stereotyped limb movements such as fumbling, picking, rubbing or patting?  Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
         if feature == 'face_pulling':
-            prompts[feature] = "Does the patient exhibit unilateral sustained face-pulling movements? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer."
+            prompts[feature] = "Does the patient exhibit unilateral sustained face-pulling movements? Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
         if feature == 'face_twitching':
-            prompts[feature] = "Are there small muscle twitches observed on the patient's face? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer."
+            prompts[feature] = "Are there small muscle twitches observed on the patient's face? Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
         if feature == 'head_turning':
-            prompts[feature] = "Does the patient forcibly or stiffly rotate their head to one side in the video? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer."
+            prompts[feature] = "Does the patient forcibly or stiffly rotate their head to one side in the video? Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
         if feature == 'asynchronous_movement':
-            prompts[feature] = "Do you observe the patient's limbs shake with variable frequency or amplitude with respect to one another? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer."
+            prompts[feature] = "Do you observe the patient's limbs shake with variable frequency or amplitude with respect to one another? Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
         if feature == 'pelvic_thrusting':
-            prompts[feature] = "Does the patient display repetitive, rhythmic, anteroposterior (forward-and-backward) movements of the hips? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer. "
+            prompts[feature] = "Does the patient display repetitive, rhythmic, anteroposterior (forward-and-backward) movements of the hips? Answer 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
+        # if feature == 'verbal_responsiveness':
+        #     prompts[feature] = "If the patient is addressed verbally by a different person, did they respond verbally in a coherent manner? Answer 'yes' or 'no'. If the patient is not addressed verbally by a different person, then the answer should be 'NA'."
+        if feature == 'intensity_evolution':
+            prompts[feature] = "Please determine if the intensity of the seizure changes over time. Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
         if feature == 'full_body_shaking':
-            prompts[feature] = "Does the patient experience shaking of the entire body including arms, legs, torso? Answer with 'yes' or 'no'. Do not include extra text in your output—only the answer."
-
+            prompts[feature] = "Does the patient experience shaking of the entire body including arms, legs, torso? Answer with 'yes' or 'no' and provide a justification for the answer. Respond with exactly one JSON object in the format { \"answer\": \"...\", \"justification\": \"...\" } and do not include any extra text outside of the JSON."
+        # if feature == 'start_time':
+        #     prompts[feature] = "At what time does the seizure start in the video? provide the timestamp in the format MM:SS (minutes and seconds). Do not include extra text in your output—only the timestamps."
+        # if feature == 'end_time':
+        #     prompts[feature] = "At what time does the seizure end in the video? provide the timestamp in the format MM:SS (minutes and seconds). Do not include extra text in your output—only the timestamps."
+        
+        # if feature in features_no_time:
+        #     prompts[feature] = prompts[feature] + " " + format_prompt_no_time
+        # # elif feature not in features_only_time:
+        # #     prompts[feature] = prompts[feature] + " " + format_prompt_time
+        # else:
+        # prompts[feature] = prompts[feature] + " " + format_prompt_no_time
     assert len(feature_names) == len(prompts), f"feature_names length {len(feature_names)} and prompt_list lengths {len(prompts)} does not match."
     return prompts
 
@@ -382,7 +394,7 @@ def parse_answer_json(raw_text):
         ans = _norm_ans(obj.get('answer'))
         just = obj.get('justification', '')
         just = _extract_nested_just(just)
-        return {'answer': ans or 'fail'}
+        return {'answer': ans or 'fail', 'justification': just}
     except Exception:
         pass
 
@@ -423,6 +435,24 @@ def ExtractFeatureByVLM(video_path, file_name, video_idx_info, log_csv, prompt_d
             try:
                 raw_answer = inference(video_path, prompt, max_new_tokens=args.max_new_tokens, temperature=0.0, do_sample=False)
 
+                # First try direct JSON parsing; if that fails, use parse_answer_json as fallback/cleaner
+                try:
+                    answer_json = json.loads(raw_answer)
+                except json.JSONDecodeError:
+                    print("Direct JSON parsing failed, attempting to clean response...")
+                    answer_json = parse_answer_json(raw_answer)
+                    if not isinstance(answer_json, dict):
+                        raise ValueError("Failed to parse JSON even after cleaning")
+
+                answer = str(answer_json.get('answer', 'fail')).strip().lower()
+                justification = str(answer_json.get('justification', '')).strip()
+
+                if not args.disable_logs and log_csv is not None:
+                    append_to_csv(log_csv, [file_name, prompt, answer, justification])
+
+                answer_dict[feature] = {'answer': answer, 'justification': justification}
+                break
+
             except Exception as e:
                 print(f"Error in prompt for feature: {feature}: {prompt}")
                 print(f"Raw VLM response: {raw_answer}")
@@ -431,11 +461,11 @@ def ExtractFeatureByVLM(video_path, file_name, video_idx_info, log_csv, prompt_d
 
         else:
             # Retries exhausted
-            answer_dict[feature] = {'answer': "fail"}
+            answer_dict[feature] = {'answer': "fail", 'justification': "fail"}
             if not args.disable_logs and log_csv is not None:
                 append_to_csv(log_csv, [file_name, prompt, "fail", "fail"])
 
-    return raw_answer
+    return answer_dict
 
 # --------------------------- Main ---------------------------
 
@@ -446,6 +476,7 @@ def main():
     output_header = ['file_name']
     for feat in prompts.keys():
         output_header.append(feat)
+        output_header.append(f'justification_for_{feat}')
 
     # Prepare result CSV (write header if new)
     if os.path.exists(inf_result_csv_fp):
@@ -504,7 +535,7 @@ def main():
         if not os.path.exists(video_path):
             # File missing: write placeholders
             for _ in prompts.keys():
-                row_to_write.append("VideoNotExist")
+                row_to_write.extend(["VideoNotExist", "VideoNotExist"])
             append_to_csv(inf_result_csv_fp, row_to_write)
             continue
 
@@ -527,7 +558,7 @@ def main():
             print(f"Error processing video {file_name}: {str(e)}")
             traceback.print_exc()
             for _ in prompts.keys():
-                row_to_write.append("fail")
+                row_to_write.extend(["fail", "fail"])
 
         append_to_csv(inf_result_csv_fp, row_to_write)
 

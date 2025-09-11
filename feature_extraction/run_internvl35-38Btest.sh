@@ -16,8 +16,6 @@ fi
 
 echo "Conda environment internvl3_5 activated."
 
-# export HF_HOME=/mnt/SSD4/prateik
-export HF_HOME=/mnt/SSD3/lina/SeizureSemiologyBench/cache
 
 # model_name options
 # Qwen/Qwen2.5-VL-7B-Instruct   1GPU  
@@ -27,22 +25,22 @@ export HF_HOME=/mnt/SSD3/lina/SeizureSemiologyBench/cache
 # video_range 1-2314  eg.1-1000, 1001-2000, 2001-2314
 
 # Run the inference script
-python internvl35_32B_crop.py \
-    --gpu 0,1,2,3 \
+python internvl35_38B_crop.py \
+    --gpu 2,3 \
     --tp 2 \
-    --videos_range 1-1000 \
-    --output_dir /mnt/SSD3/lina/task4 \
+    --videos_range 1-2 \
+    --output_dir /home/lina/icassp/output \
     --model_name OpenGVLab/InternVL3_5-38B \
     --dataset_dir /mnt/SSD3/lina/ucla2/cropped_segments \
     --cache_dir /mnt/SSD3/lina/SeizureSemiologyBench/cache 
 
-  python internvl35_32B_pose.py \
+python internvl35_38B_pose.py \
     --gpu 2,3 \
     --tp 2 \
-    --videos_range 1-1000 \
-    --output_dir /mnt/SSD3/lina/task4 \
+    --videos_range 1-2 \
+    --output_dir /home/lina/icassp/output \
     --model_name OpenGVLab/InternVL3_5-38B \
     --dataset_dir /mnt/SSD3/lina/ucla2/pose_segments \
-    --cache_dir /mnt/SSD3/lina/SeizureSemiologyBench/cache   
+    --cache_dir /mnt/SSD3/lina/SeizureSemiologyBench/cache1   
 
 echo "Done!"
