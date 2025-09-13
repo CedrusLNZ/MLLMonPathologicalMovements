@@ -28,19 +28,19 @@ echo "Conda environment internvl3_5 activated."
 python internvl35_38B_crop.py \
     --gpu 2,3 \
     --tp 2 \
-    --videos_range 1-2 \
+    --videos_range 161-320 \
     --output_dir /home/lina/icassp/output \
     --model_name OpenGVLab/InternVL3_5-38B \
     --dataset_dir /mnt/SSD3/lina/ucla2/cropped_segments \
-    --cache_dir /mnt/ssd4/prateik/ 
+    --cache_dir /mnt/SSD3/lina/SeizureSemiologyBench/cache
 
 python internvl35_38B_pose.py \
     --gpu 2,3 \
     --tp 2 \
-    --videos_range 1-2 \
+    --videos_range 161-320 \
     --output_dir /home/lina/icassp/output \
     --model_name OpenGVLab/InternVL3_5-38B \
     --dataset_dir /mnt/SSD3/lina/ucla2/pose_segments \
-    --cache_dir /mnt/ssd4/prateik/   
+    --cache_dir /mnt/SSD3/lina/SeizureSemiologyBench/cache  
 
 echo "Done!"
