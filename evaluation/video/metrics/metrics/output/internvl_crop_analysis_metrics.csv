@@ -1,0 +1,6 @@
+Metric,blank_stare,close_eyes,eye_blinking,oral_automatisms,face_pulling,face_twitching,head_turning
+Accuracy,0.433,0.267,0.805,0.456,0.489,0.378,0.8
+Precision,0.433,0.267,0.0,0.333,0.373,0.378,0.0
+Recall,1.0,1.0,0.0,0.581,0.862,1.0,0.0
+F1 Score,0.605,0.422,0.0,0.424,0.521,0.548,0.0
+Positive Num,39.0,23.0,14.0,31.0,29.0,34.0,18.0
