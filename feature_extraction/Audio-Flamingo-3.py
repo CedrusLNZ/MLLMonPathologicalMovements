@@ -19,7 +19,7 @@ from huggingface_hub import snapshot_download
 def parse_args():
     p = argparse.ArgumentParser("ALM Task1 (AF3 · one-pass per audio)")
     p.add_argument("--gpu", type=str, default="0")
-    p.add_argument("--dataset_dir", type=str, default="/mnt/SSD3/lina/audio_clear")
+    p.add_argument("--dataset_dir", type=str, default="/mnt/SSD1/prateik/seizure_audition/data/audio")
     p.add_argument("--output_dir", type=str, default=os.path.expanduser("~/alm_results_full"))
     p.add_argument("--cache_dir", type=str, default=os.path.expanduser("~/hf_cache"))
     p.add_argument("--disable_logs", type=lambda x: x.lower() in ("1","true","yes"), default=True)
