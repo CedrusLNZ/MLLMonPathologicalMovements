@@ -1,0 +1,6 @@
+Metric,verbal_responsiveness,ictal_vocalization
+Accuracy,0.434,0.765
+Precision,0.468,0.85
+Recall,0.361,0.708
+F1 Score,0.38,0.773
+Positive Num,11.0,53.0

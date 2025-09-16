@@ -3,7 +3,7 @@
 
 # Activate virtual environment
 eval "$(conda shell.bash hook)"
-conda activate qwenvl
+conda activate qwen25
 
 # Check if activation was successful
 if [ $? -ne 0 ]; then
@@ -21,20 +21,11 @@ echo "Conda environment qwenvl activated."
 
 # video_range 1-2314  eg.1-1000, 1001-2000, 2001-2314
 # Run the inference script
-python ../qwen-2.5-VL-32B_crop.py \
-    --gpu 2,3 \
-    --videos_range 161-320 \
-    --output_dir /home/lina/icassp/output \
+python Qwen-2.5-VL-32B-Instruct.py \
+    --gpu 0,1,3 \
+    --videos_range 1-100 \
+    --output_dir /home/lina/SeizureSemiologyBench/qwenvl233 \
     --model_name Qwen/Qwen2.5-VL-32B-Instruct \
-    --dataset_dir /mnt/SSD3/lina/ucla2/cropped_segments \
+    --dataset_dir /mnt/SSD3/lina/ucla2/3videos_in90 \
     --cache_dir /mnt/SSD3/lina/SeizureSemiologyBench/cache 
-
-python ../qwen-2.5-VL-32B_pose.py \
-    --gpu 2,3 \
-    --videos_range 161-320 \
-    --output_dir /home/lina/icassp/output \
-    --model_name Qwen/Qwen2.5-VL-32B-Instruct \
-    --dataset_dir /mnt/SSD3/lina/ucla2/pose_segments \
-    --cache_dir /mnt/SSD3/lina/SeizureSemiologyBench/cache    
 echo "Done!"
-ru
