@@ -1,6 +1,6 @@
-Metric,arm_flexion,occur_during_sleep,tonic,clonic,arm_straightening,figure4,limb_automatisms
-Accuracy,0.63,0.778,0.642,0.531,0.58,0.568,0.395
-Precision,0.597,0.741,0.417,0.205,0.388,0.135,0.254
-Recall,0.881,0.645,0.185,0.533,0.826,0.625,0.75
-F1 Score,0.712,0.69,0.256,0.296,0.528,0.222,0.38
-Positive Num,42.0,31.0,27.0,15.0,23.0,8.0,20.0
+Metric,arm_flexion,arms_move_simultaneously,occur_during_sleep,tonic,clonic,arm_straightening,figure4,limb_automatisms,asynchronous_movement,pelvic_thrusting,full_body_shaking
+Accuracy,0.63,0.321,0.778,0.642,0.531,0.58,0.568,0.395,0.531,0.432,0.395
+Precision,0.597,0.194,0.741,0.417,0.205,0.388,0.135,0.254,0.433,0.218,0.224
+Recall,0.881,0.706,0.645,0.185,0.533,0.826,0.625,0.75,0.382,0.8,0.765
+F1 Score,0.712,0.304,0.69,0.256,0.296,0.528,0.222,0.38,0.406,0.343,0.347
+Positive Num,42.0,17.0,31.0,27.0,15.0,23.0,8.0,20.0,34.0,15.0,17.0
