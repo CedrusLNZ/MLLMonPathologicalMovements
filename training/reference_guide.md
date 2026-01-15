@@ -4,9 +4,9 @@
 
 This training pipeline implements a Vision Transformer (ViT) classifier for the baseline MLLM comparison. The pipeline follows the requirements:
 
-- **Data Split**: 90 patients → 60 train / 30 test (2:1 ratio)
+- **Data Split**: 90 videos → 60 train / 30 test (2:1 ratio roughly), splitted at patient-level
 - **Cross-Validation**: 3-fold CV on training set
-- **Early Stopping**: Training stops when validation loss stops decreasing
+- **Early Stopping**: Training stops when validation loss stops decreasing (early stopping)
 - **Output**: Test results for 30 patients in CSV format
 
 ## Pipeline Components

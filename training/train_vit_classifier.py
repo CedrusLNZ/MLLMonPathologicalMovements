@@ -283,9 +283,14 @@ def main():
     
     # Initialize ViT feature extractor
     print("Initializing ViT feature extractor...")
+    # Set up cache directory for frames (similar to MLLM code)
+    video_cache_dir = os.path.join(args.output_dir, 'video_cache')
+    os.makedirs(video_cache_dir, exist_ok=True)
+    
     feature_extractor = ViTFeatureExtractor(
         model_name=args.vit_model,
-        device=args.device
+        device=args.device,
+        cache_dir=video_cache_dir
     )
     
     # Extract features for training set
@@ -386,7 +391,11 @@ def main():
         
         cv_results.append({
             'fold': fold,
+            'train_loss': train_losses[-1] if train_losses else None,
             'val_loss': val_loss,
+            'epochs': len(train_losses),
+            'train_losses': train_losses,
+            'val_losses': val_losses,
             'metrics': fold_metrics
         })
         

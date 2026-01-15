@@ -97,9 +97,14 @@ def main():
     
     # Initialize ViT feature extractor
     print("Initializing ViT feature extractor...")
+    # Set up cache directory for frames (similar to MLLM code)
+    video_cache_dir = os.path.join(args.model_dir, 'video_cache')
+    os.makedirs(video_cache_dir, exist_ok=True)
+    
     feature_extractor = ViTFeatureExtractor(
         model_name=args.vit_model,
-        device=args.device
+        device=args.device,
+        cache_dir=video_cache_dir
     )
     
     # Extract features for test set

@@ -1,6 +1,5 @@
 """
 Patient stratification script for train/test split (2:1 ratio) and cross-validation.
-Based on the stratification approach referenced in the Google Drive folder.
 """
 import pandas as pd
 import numpy as np
@@ -42,16 +41,18 @@ def create_patient_stratification(annotation_csv, output_dir='training/splits'):
     print(f"Patients with label 1 (seizure): {patient_df['label'].sum()}")
     print(f"Patients with label 0 (non-seizure): {(patient_df['label'] == 0).sum()}")
     
-    # Stratified split: 60 train, 30 test (2:1 ratio)
+    # Stratified split: approximately 2:1 ratio (60 train / 30 test videos)
+    # Split at patient level to avoid data leakage (no patient in both sets)
     from sklearn.model_selection import train_test_split
     
     X = patient_df[['patient_id']]
     y = patient_df['label']
     
-    # Stratified split maintaining label distribution
+    # Use 2:1 ratio (test_size = 1/3 ≈ 0.333)
+    # This ensures no patient appears in both training and testing sets
     train_patients, test_patients = train_test_split(
         patient_df, 
-        test_size=30,  # 30 patients for test
+        test_size=1/3,  # 2:1 ratio (approximately 60 train / 30 test videos)
         random_state=42,
         stratify=y
     )
