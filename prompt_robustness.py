@@ -1693,10 +1693,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     build.add_argument(
         "--raw-video-root",
-        default="/mnt/SSD1/linazhang/Dataset",
+        default=None,
         help=(
             "Fallback directory containing one raw video file per CSV row. "
-            "Use an empty string to disable."
+            "Omit to disable."
         ),
     )
     build.add_argument("--segments-root", default=None)

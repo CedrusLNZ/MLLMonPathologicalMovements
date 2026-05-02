@@ -1,55 +1,29 @@
 signal enhancement
 
-## Prompt Robustness And GEPA Optimization
+## CNN And ViViT Benchmarks
 
-`prompt_robustness.py` builds fold-aware yes/no prompt manifests, runs prompt
-variants through a video-MLLM backend, scores prompt sensitivity, and can run
-GEPA prompt optimization. `mllm_video_backend.py` is a persistent JSONL backend
-wrapper so large Qwen or InternVL models are loaded once across many prompt
-evaluations.
+Reusable benchmark scripts are included for feature-folder video classification:
 
-Generated outputs belong under `prompt_experiments/`, which is intentionally
-ignored by Git. Commit only reusable code and hand-written documentation, not
-prompt sweeps, model predictions, caches, checkpoints, or local credentials.
+- `finetune_vit_by_folder.py`: fine-tunes a video transformer, defaulting to
+  `google/vivit-b-16x2-kinetics400`.
+- `finetune_cnn_by_folder.py`: fine-tunes torchvision 3D CNN baselines such as
+  `r3d_18`, `mc3_18`, and `r2plus1d_18`.
+- `aggregate_patient_predictions.py` and `evaluate_patient_predictions.py`:
+  aggregate segment-level predictions to patient-level scores and compute
+  thresholded metrics.
+- `filter_videos_by_csv.py`: renames videos from a CSV mapping and removes
+  unlisted files after an explicit `--apply`.
 
-Build a manifest:
-
-```bash
-python prompt_robustness.py build-manifest \
-  --csv evaluation/dataset/90_FeatureAnnotation.csv \
-  --folds-json /path/to/folds.json \
-  --data-root /path/to/videos \
-  --output-dir prompt_experiments
-```
-
-Smoke-test the runner without loading an MLLM:
+Install the benchmark dependencies with:
 
 ```bash
-python prompt_robustness.py run \
-  --examples-jsonl prompt_experiments/examples.jsonl \
-  --prompts-jsonl prompt_experiments/prompts.jsonl \
-  --output-jsonl /tmp/prompt_predictions_smoke.jsonl \
-  --features arm_flexion \
-  --prompt-ids minimal \
-  --splits dev \
-  --limit 2 \
-  --persistent-backend-command "python mllm_video_backend.py --backend dummy" \
-  --overwrite
+python -m pip install -r requirements-benchmarks.txt
 ```
 
-Run GEPA optimization after installing the optional dependencies:
+Generated checkpoints, prediction CSVs, and metric folders are ignored by Git.
 
-```bash
-python -m pip install -r requirements-prompt-optimization.txt
+## Prompt Optimization
 
-python prompt_robustness.py optimize-gepa \
-  --examples-jsonl prompt_experiments/examples.jsonl \
-  --output-dir prompt_experiments/gepa \
-  --persistent-backend-command "python mllm_video_backend.py --backend qwen --gpu 0,1 --cache-dir /path/to/cache" \
-  --reflection-lm bedrock/minimax.minimax-m2.5 \
-  --max-metric-calls 12 \
-  --max-train-examples 8
-```
-
-For each feature and fold, GEPA optimizes on the training split only, then
-evaluates the optimized prompt on dev and held-out test examples.
+`prompt_robustness.py` and `mllm_video_backend.py` contain the prompt robustness
+and GEPA utilities. Generated prompt sweeps belong under `prompt_experiments/`,
+which is ignored by Git.

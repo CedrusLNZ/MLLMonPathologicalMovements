@@ -13,4 +13,11 @@ prompt_experiments/
 # Local model checkpoints and result dumps
 finetuned_models/
 finetuned_models_cnn/
+cv_metrics/
+cv_metrics_cnn/
+aggregated_patient_predictions.csv
+mean_aggregated_preds.csv
+mean_metrics*.csv
+metrics_threshold*.csv
+cnn_preds.csv
 *.bundle
