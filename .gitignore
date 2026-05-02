@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Local credentials and caches
+.env
+mllm_cache/
+
+# Generated prompt-optimization outputs
+prompt_experiments/
+
+# Local model checkpoints and result dumps
+finetuned_models/
+finetuned_models_cnn/
+*.bundle
