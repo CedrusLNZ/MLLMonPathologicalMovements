@@ -1,4 +1,4 @@
-# Can MLLMs Understand Pathologic Movements? — Seizure Semiology Benchmark
+# Can Multimodal Large Language Models Understand Pathologic Movements? A Pilot Study on Seizure Semiology
 
 > **EMBC 2025** | [Paper](EMBC_Paper.pdf)
 
@@ -14,16 +14,33 @@ Zero-shot MLLMs outperformed fine-tuned CNN/ViViT baselines on **13 of 18 visual
 
 ### Feature-level Highlights
 
-| Feature | Setting | Best MLLM F1 | CNN/ViViT F1 |
-|---|---|---|---|
-| Arm flexion | Zero-shot | **0.800** | 0.731 |
-| Occur during sleep | Zero-shot | **0.771** | 0.733 |
-| Tonic | Pose-enhanced | **0.537** | — |
-| Ictal vocalization | ASR + Audio Flamingo 3 | **0.793** | — |
+Representative feature-level F1 scores from Tables II–IV in the paper:
 
-**Strengths:** MLLMs were most effective on salient postural and contextual cues — sleep state, arm flexion/straightening, Figure-4 posture, and tonic events.
+| Feature | Group | CNN F1 | ViViT F1 | Qwen2.5-VL F1 | InternVL3.5 F1 | Best enhanced setting | Best enhanced F1 |
+|---|---|---:|---:|---:|---:|---|---:|
+| Occur during sleep | Limb/body | 0.733 | 0.510 | 0.583 | **0.771** | Pose + InternVL3.5 | 0.750 |
+| Arm flexion | Limb/body | 0.731 | 0.720 | **0.800** | 0.771 | Pose + InternVL3.5 | 0.724 |
+| Arm straightening | Limb/body | 0.447 | 0.442 | **0.582** | 0.556 | Pose + Qwen2.5-VL | 0.528 |
+| Figure-4 posture | Limb/body | 0.126 | 0.332 | **0.462** | 0.296 | Pose + Qwen2.5-VL | 0.222 |
+| Tonic | Limb/body | 0.321 | 0.506 | 0.316 | 0.409 | Pose + InternVL3.5 | **0.537** |
+| Asynchronous movement | Limb/body | **0.690** | 0.674 | 0.514 | 0.575 | Pose + Qwen2.5-VL | 0.406 |
+| Full-body shaking | Limb/body | **0.513** | 0.412 | 0.304 | 0.375 | Pose + InternVL3.5 | 0.375 |
+| Blank stare | Facial | 0.569 | 0.583 | 0.631 | 0.608 | Crop + Qwen2.5-VL | **0.632** |
+| Closed eyes | Facial | 0.410 | 0.393 | **0.524** | 0.422 | Crop + Qwen2.5-VL | 0.458 |
+| Face pulling | Facial | 0.463 | 0.453 | 0.222 | 0.293 | Crop + InternVL3.5 | **0.521** |
+| Face twitching | Facial | 0.531 | 0.527 | 0.533 | **0.548** | Crop + Qwen/InternVL | **0.548** |
+| Head turning | Facial | **0.325** | 0.317 | 0.320 | 0.000 | Crop + Qwen2.5-VL | 0.276 |
 
-**Limitations:** Performance lagged on subtle or high-frequency movements — eye blinking, head turning, oral automatisms, asynchronous movement, and full-body shaking.
+Audio features were evaluated with Audio Flamingo 3 rather than CNN/ViViT baselines:
+
+| Feature | AF3 F1 | SEGAN + AF3 F1 | ASR + AF3 F1 |
+|---|---:|---:|---:|
+| Verbal responsiveness | **0.380** | 0.286 | 0.193 |
+| Ictal vocalization | 0.773 | 0.567 | **0.793** |
+
+**Strengths:** MLLMs were most effective on salient postural and contextual cues, including sleep state, arm flexion/straightening, Figure-4 posture, blank stare, and tonic events with pose enhancement.
+
+**Limitations:** Performance lagged on subtle or high-frequency movements, including eye blinking, head turning, oral automatisms, asynchronous movement, and full-body shaking.
 
 ### Explainability
 
