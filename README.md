@@ -24,27 +24,7 @@ We present the **first systematic evaluation of MLLMs for comprehensive seizure 
 
 ## Overview
 
-```
-Raw Seizure Video
-        │
-        ├─── Facial Crop (Sapiens) ──────────────────────────────────┐
-        ├─── Pose Overlay (OpenPose) ────────────────────────────────┤
-        └─── Audio Denoising (SEGAN) + Transcription (Whisper) ──────┤
-                                                                      │
-               ┌──────────────────────────────────────────────────────┘
-               │      30s segments, 5s overlap, 2 FPS
-               ▼
-     ┌─────────────────────┐    ┌─────────────────────────┐
-     │  InternVL3.5-38B    │    │   Qwen2.5-VL-32B        │  ← Visual Features (18)
-     └─────────────────────┘    └─────────────────────────┘
-     ┌──────────────────────────────────────────┐
-     │          Audio Flamingo 3 (AF3)          │              ← Audio Features (2)
-     └──────────────────────────────────────────┘
-               │
-               │  "any-yes" aggregation across segments
-               ▼
-          Feature Predictions + Natural Language Justifications
-```
+![Pipeline Overview](szicassp.png)
 
 **Three signal enhancement strategies** target different feature groups:
 - **Facial features** → temporal face crop (Sapiens keypoints)
