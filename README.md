@@ -7,6 +7,28 @@ Official implementation of **"Can Multimodal Large Language Models Understand Pa
 We present the **first systematic evaluation of MLLMs for comprehensive seizure semiology recognition**, benchmarking zero-shot MLLMs against fine-tuned CNN/ViT baselines across 20 ILAE-defined semiological features in 90 clinical seizure recordings.
 
 ---
+## Overview
+
+![Pipeline Overview](szicassp.png)
+
+**Three signal enhancement strategies** target different feature groups:
+- **Facial features** → temporal face crop (Sapiens keypoints)
+- **Limb/body features** → OpenPose skeleton overlay
+- **Audio features** → SEGAN speech enhancement + Whisper ASR transcript
+
+---
+
+## Semiological Features
+
+20 ILAE-standardized features across three modalities:
+
+| Category | Features |
+|---|---|
+| **Limb & Body (11)** | arm_flexion, arm_straightening, arms_move_simultaneously, tonic, clonic, figure4, limb_automatisms, asynchronous_movement, pelvic_thrusting, full_body_shaking, occur_during_sleep |
+| **Facial (7)** | blank_stare, close_eyes, eye_blinking, oral_automatisms, face_pulling, face_twitching, head_turning |
+| **Audio (2)** | verbal_responsiveness, ictal_vocalization |
+
+---
 
 ## Key Results
 
@@ -48,28 +70,7 @@ Expert review rated **94.3%** of MLLM justifications for correctly predicted cas
 
 ---
 
-## Overview
 
-![Pipeline Overview](szicassp.png)
-
-**Three signal enhancement strategies** target different feature groups:
-- **Facial features** → temporal face crop (Sapiens keypoints)
-- **Limb/body features** → OpenPose skeleton overlay
-- **Audio features** → SEGAN speech enhancement + Whisper ASR transcript
-
----
-
-## Semiological Features
-
-20 ILAE-standardized features across three modalities:
-
-| Category | Features |
-|---|---|
-| **Limb & Body (11)** | arm_flexion, arm_straightening, arms_move_simultaneously, tonic, clonic, figure4, limb_automatisms, asynchronous_movement, pelvic_thrusting, full_body_shaking, occur_during_sleep |
-| **Facial (7)** | blank_stare, close_eyes, eye_blinking, oral_automatisms, face_pulling, face_twitching, head_turning |
-| **Audio (2)** | verbal_responsiveness, ictal_vocalization |
-
----
 
 ## Repository Structure
 
@@ -306,9 +307,6 @@ python evaluation/video/merge_segment_feature.py
 
 > The dataset contains identifiable patient information and is **not publicly released**. Researchers wishing to access the data should contact the corresponding authors and comply with IRB requirements.
 
-Video naming convention: `{PatientID}@{Date}@{Equipment}@{Type}.{ext}`
-
-Segmented videos: `{base_name}_segment_{n}.{ext}`
 
 ---
 
