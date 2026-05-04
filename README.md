@@ -75,7 +75,7 @@ Expert review rated **94.3%** of MLLM justifications for correctly predicted cas
 ## Repository Structure
 
 ```
-MLLMonPathologicalMovements/
+PathMotionMLLM/
 ├── feature_extraction/         # MLLM inference: visual feature extraction
 │   ├── internvl35_38B_pose.py  # InternVL3.5-38B + pose overlay (limb features)
 │   ├── internvl35_38B_crop.py  # InternVL3.5-38B + face crop (facial features)
