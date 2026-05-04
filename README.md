@@ -10,15 +10,24 @@ We present the **first systematic evaluation of MLLMs for comprehensive seizure 
 
 ## Key Results
 
-| Setting | Features Won (vs CNN/ViViT) | Explainability (≥60% faithfulness) |
-|---|---|---|
-| Zero-shot MLLMs | **13 / 18** | **94.3%** |
-| + Signal Enhancement | **10 / 20 additional** | — |
+Zero-shot MLLMs outperformed fine-tuned CNN/ViViT baselines on **13 of 18 visual semiological features** by F1 score — without any task-specific training data. Feature-targeted signal enhancement (pose overlay, face crop, audio denoising + ASR) further improved performance on **10 of 20 features** (visual + audio combined).
 
-- **Arm flexion** best MLLM F1: **0.800** (vs CNN 0.731)
-- **Occur during sleep** best MLLM F1: **0.771** (vs CNN 0.733)
-- **Tonic** best (pose-enhanced) F1: **0.537**
-- **Ictal vocalization** best (ASR+AF3) F1: **0.793**
+### Feature-level Highlights
+
+| Feature | Setting | Best MLLM F1 | CNN/ViViT F1 |
+|---|---|---|---|
+| Arm flexion | Zero-shot | **0.800** | 0.731 |
+| Occur during sleep | Zero-shot | **0.771** | 0.733 |
+| Tonic | Pose-enhanced | **0.537** | — |
+| Ictal vocalization | ASR + Audio Flamingo 3 | **0.793** | — |
+
+**Strengths:** MLLMs were most effective on salient postural and contextual cues — sleep state, arm flexion/straightening, Figure-4 posture, and tonic events.
+
+**Limitations:** Performance lagged on subtle or high-frequency movements — eye blinking, head turning, oral automatisms, asynchronous movement, and full-body shaking.
+
+### Explainability
+
+Expert review rated **94.3%** of MLLM justifications for correctly predicted cases at ≥60% faithfulness, supporting clinician-in-the-loop interpretability.
 
 ---
 
@@ -334,23 +343,6 @@ If you use this code or the dataset, please cite:
 
 ---
 
-## Authors
-
-| Name | Affiliation |
-|---|---|
-| Lina Zhang | ECE, UCLA |
-| Tonmoy Monsoor | ECE, UCLA |
-| Mehmet Efe Lorasdagi | ECE, UCLA |
-| Prateik Sinha | Mathematics, UCLA |
-| Chong Han | Mathematics, UCLA |
-| Peizheng Li | Mercedes-Benz AG |
-| Yuan Wang | ECE, Zhejiang University |
-| Jessica Pasqua | Neurology, UCLA |
-| Colin McCrimmon | Neurology, UCLA |
-| Rajarshi Mazumder | Neurology, UCLA |
-| Vwani Roychowdhury | ECE, UCLA |
-
----
 
 ## License
 
